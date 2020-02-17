@@ -13,19 +13,41 @@ Purposes of this tutorial are,
 - Recording personal study notes
 - Practicing English writing skills
 
-## axios API
+I'd like to divide things into 3 questions,
 
-## Request Config
+- [Design Theories](#design-theories), why does axios look like this?
+- [Usage Knowledges](#usage-knowledges), what didn't mention clearly in axios official document?
+- [Problem Solutions](#problem-solutions), how to analyze a problem and open a good issue or pull request?
 
-## Response Schema
+## Design Theories
 
-## Config Defaults
+### Keep Simple
 
-## Interceptors
+The most impressive design in axios is its flexible architecture, including basic configs, interceptors, transformers and adapters. The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, ask yourself first that whether it is important and common enough to be added, or it can be solved by those hooks.
 
-## Handling Errors
+### Promise based
 
-## Cancellation
+Make sure you are familiar with asynchronous programming when using axios, especially for Promise and async/await. Because axios connects internal things by Promise.
+
+## Usage Knowledges
+
+Let's follow the structure of official document. In each topic, I will give some examples to explain the misleading or unclear points.
+
+### axios API
+
+### Request Config
+
+### Response Schema
+
+### Config Defaults
+
+### Interceptors
+
+### Handling Errors
+
+### Cancellation
+
+## Problem Solutions
 
 
 [axios]: https://github.com/axios/axios
