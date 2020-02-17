@@ -25,7 +25,7 @@ I'd like to divide things into 3 questions,
 
 ### Keep Simple
 
-The most impressive design in axios is its flexible architecture, including basic configs, interceptors, transformers and adapters. The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, ask yourself first that whether it is important and common enough to be added, or it can be solved by those hooks.
+The most impressive design in axios is its flexible architecture, including basic configs, interceptors, transformers and adapters. The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, think twice whether it is important and common enough to be added, or it can be solved by current hooks.
 
 ### Promise based
 
