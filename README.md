@@ -37,7 +37,7 @@ Let's follow the structure of official document. In each topic, I will give some
 
 ### axios API
 
-- Note the difference and relationship between `axios` and `Axios`.
+#### Note the difference and relationship between `axios` and `Axios`.
 
 Using terms in [object-oriented programming][oop], `Axios` is the *class* which provides core `request` method and other [method aliases][request-method-aliases], and `axios` is an instance of `Axios` created by `axios.create` with the default configs.
 
@@ -50,7 +50,7 @@ axios.Cancel // object
 axios.create(config).Cancel // undefined
 ```
 
-- The position of parameter `config` is different among request methods.
+#### The position of parameter `config` is different among request methods.
 
 For beginners, it may be a little confused. In fact, you can remember easily by asking yourself whether it has a `data` parameter.
 
