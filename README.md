@@ -27,13 +27,13 @@ I'd like to divide things into 3 questions,
 
 The most impressive design in axios is its flexible architecture, including basic configs, interceptors, transformers and adapters. The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, think twice whether it is important and common enough to be added, or it can be solved by current hooks.
 
-### Promise based
+### Promise Based
 
 Make sure you are familiar with asynchronous programming when using axios, especially for Promise and async/await. Because axios connects internal things by Promise.
 
 ## Usage Knowledges
 
-Let's follow the structure of official document. In each topic, I will give some examples to explain the misleading or unclear points.
+Let's follow the structure of official document. In each topic, I will give some examples to explain the misleading or unclear points. To keep this document not out-of-date, the detailed logic will not be introduced too much. It may change between different versions, please read specific axios source codes.
 
 ### axios API
 
@@ -61,6 +61,68 @@ axios.post/put/patch(url, data, config) // third
 ```
 
 ### Request Config
+
+#### Understand how `baseURL` concats with `url`.
+
+Don't think it as simple as `baseURL + url`. A bad example is,
+
+```js
+axios({
+  baseURL: 'http://a.com/b?c=d',
+  url: '&e=f'
+})
+```
+
+#### Distinguish `params` with `data`.
+
+When you want to send request data, read the endpoint document carefully to make sure where it should be.
+
+- If should be seen in the url, it is `params`, otherwise is `data`.
+- If the method is `get`, it is `params` with 99% possibilities. Theoretically, `get` can also send with `data`, but is very rare.
+- If the method is `post`, it is `data` with 80% possibilities. `post` usually works with `data` and less will have both.
+- For other methods, apply the similar strategy.
+
+```js
+axios({
+  url: 'http://a.com/b?c=d'
+})
+
+// is as well as
+
+axios({
+  url: 'http://a.com/b',
+  params: {
+    c: 'd'
+  }
+})
+```
+
+#### Serialize `params` correctly.
+
+The default serialization can only handle simple `params`. If you find out the built url is not as expected, especially when your `params` contains arrays or nested objects as values, you may need to set `paramsSerializer`.
+
+
+```js
+const qs = require('qs'); // https://www.npmjs.com/package/qs
+
+// url?a%5B0%5D=1&a%5B1%5D=2&b%5Bc%5D=42
+axios(url, {
+  params: {
+    a: [1, 2],
+    b: {
+      c: 42
+    }
+  },
+  paramsSerializer(params) {
+    // or any other libraries you like
+    return qs.stringify(params);
+  }
+})
+```
+
+#### Submit `data` successfully.
+
+Here must be the most severely afflicted area.
 
 ### Response Schema
 
