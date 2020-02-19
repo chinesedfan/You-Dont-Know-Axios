@@ -103,7 +103,7 @@ The default serialization can only handle simple `params`. If you find out the b
 
 
 ```js
-const qs = require('qs'); // https://www.npmjs.com/package/qs
+var qs = require('qs'); // https://www.npmjs.com/package/qs
 
 // url?a%5B0%5D=1&a%5B1%5D=2&b%5Bc%5D=42
 axios(url, {
@@ -122,7 +122,53 @@ axios(url, {
 
 #### Submit `data` successfully.
 
-Here must be the most severely afflicted area.
+Here must be the most severely afflicted area. Lots of axios issues seek help due to it.
+
+> In requests, (such as POST or PUT), the client tells the server what type of data is actually sent.
+
+So, `data` must match with the header [Content Type][mdn-content-type]. Followings are its common values.
+
+- `text/plain`
+- `application/json`
+
+In this case, `data` should be JSON format. If `data` is an object (not null), the default `transformRequest` will set Content-Type to it automatically.
+
+```js
+axios({
+  data: {
+    a: 42
+  }
+})
+
+// equals to 
+
+axios({
+  data: JSON.stringify({a: 42})
+})
+```
+
+- `application/x-www-form-urlencoded`
+
+As the name indicated, `data` should be URL/URI encoded. If `data` is an instance of URLSearchParams, the default `transformRequest` will set Content-Type to it automatically.
+
+Note that it treats numbers as strings, while `application/json` is type-sensitive.
+
+```js
+var data = new URLSearchParams();
+data.append('a', 42)
+
+axios({
+  data: data
+})
+
+// equals to 
+
+var qs = require('qs'); // https://www.npmjs.com/package/qs
+
+axios({
+  data: qs.stringify({a: '42'})
+})
+```
 
 ### Response Schema
 
@@ -139,4 +185,5 @@ Here must be the most severely afflicted area.
 
 [axios]: https://github.com/axios/axios
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
+[mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 [oop]: https://en.wikipedia.org/wiki/Object-oriented_programming
