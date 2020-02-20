@@ -202,6 +202,24 @@ axios({
 })
 ```
 
+#### Do you use the right `adapter`?
+
+For enviroments like Electron or Jest, both XMLHttpRequest and process are existed in the global context. axios may not select the right `adapter` as you want.
+
+```js
+axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
+```
+
+And you can set `adapter` explicitly.
+
+```js
+axios({
+  adapter: require('axios/lib/adapters/http')
+})
+```
+
+If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in npm.
+
 ### Response Schema
 
 ### Config Defaults
