@@ -62,6 +62,20 @@ axios.post/put/patch(url, data, config) // third
 
 ### Request Config
 
+<img src="assets/axios-configs.png" width="80%" />
+
+The above diagram shows all request configs.
+
+- The left dotted box contains 4 main configs(`method`, `url`, `headers`, `data`), which are corresponding to 4 parts in HTTP request format, and their related things.
+- The right dotted box is `adapter` related. A separate line divides configs into browser only(`xhr.js`) and server only(`http.js`). Others configs should be applicable to both sides, but are not fully supported.
+- The rest is configs that control the process, including cancellation, timeout and response transforming.
+
+#### Should `method` be lower cases or upper?
+
+According to HTTP specifications, the method field must be all upper cases. The default 2 adapters have done that internally. So axios users can use case-insensitive `method`.
+
+I used to worry about headers merging. But in fact, axios will convert received `method` to lower cases and keep cases unchanged until sending out.
+
 #### Understand how `baseURL` concats with `url`.
 
 Don't think it as simple as `baseURL + url`. A bad example is,
