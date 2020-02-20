@@ -87,6 +87,24 @@ axios({
 })
 ```
 
+#### Nightmares of `headers`: CORS, cookies and `auth`.
+
+First of all, `headers` in axios are request headers, not response headers. Therefore, [CORS][mdn-cors] related problems can't be resolved by adding values in `headers`. Considering many users are confused with CORS, I'd like to give some tips about it.
+
+- CORS problems are browser only, when your site requests a resource that has a different origin (domain, protocol, or port) from its own. Node.js scripts and [Postman][postman] don't have this kind of trouble.
+- Sometimes, take it easy for those additional OPTIONS requests. They are [preflighted requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Preflighted_requests), which are very normal things and not strange bugs caused by axios.
+- If some headers couldn't be accessed in your codes, even though they were visible in the network panel, please make sure the server responses correct [Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Access-Control-Expose-Headers) header.
+- As [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Credentialed_requests_and_wildcards) says, when responding to a credentialed request, the server must specify an origin in the value of the `Access-Control-Allow-Origin header`, instead of specifying the "*" wildcard. Or cookies will not be send, even though `withCredentials` has been set true in axios.
+
+Some users complains cookies can't be set when the server has responded `Set-Cookie` header. You may check whether they are [HttpOnly or Secure](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies), and scopes of cookies.
+
+I prefer to set `Authorization` manually in `headers` to authorize, unless you know exactly what happens in axios. Here are some warnings for users,
+
+- If no `auth` was set, http adapter will try to extract user and password from the url, while xhr adapter does nothing.
+- And xhr adapter may not able to handle special characters well.
+
+Merging of headers will be introduced in [Config Defaults](#config-defaults) section.
+
 #### Distinguish `params` with `data`.
 
 When you want to send request data, read the endpoint document carefully to make sure where it should be.
@@ -200,4 +218,6 @@ axios({
 [axios]: https://github.com/axios/axios
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
 [mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
+[mdn-cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 [oop]: https://en.wikipedia.org/wiki/Object-oriented_programming
+[postman]: https://www.postman.com/
