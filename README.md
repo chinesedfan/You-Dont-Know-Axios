@@ -214,7 +214,7 @@ Someone wishes other types of timeout. Looks like [got](https://github.com/sindr
 
 #### Do you use the right `adapter`?
 
-For enviroments like Electron or Jest, both XMLHttpRequest and process are existed in the global context. axios may not select the right `adapter` as you want.
+For environments like Electron or Jest, both XMLHttpRequest and process are existed in the global context. axios may not select the right `adapter` as you want.
 
 ```js
 axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
@@ -232,16 +232,178 @@ If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/We
 
 ### Response Schema
 
+You may expect to also get a response when non-2XX status code returns. Remind that `validateStatus` checks status code first. See [Request Config](#request-config).
+
+Then don't forget to config `validateStatus` as you wish.
+
+```js
+axios(url, {
+  validateStatus: function (status) {
+    return status >= 200;
+  }
+})
+```
+
 ### Config Defaults
 
 ### Interceptors
 
+From [Design Theories](#design-theories), we can know the position of interceptors. They are the beginning part (request interceptors) and the ending part (response interceptor) of the handlers chain.
+
+```js
+axios.interceptors.request.use(requestResolve1, requestReject1);
+axios.interceptors.request.use(requestResolve2, requestReject2);
+axios.interceptors.response.use(responseResolve1, responseReject1);
+axios.interceptors.response.use(responseResolve2, responseReject2);
+
+axios(config).then(thenBlock).catch(catchBlock);
+
+// equals to
+
+Promise.resolve(config)
+  .then(requestResolve2, requestReject2)
+  .then(requestResolve1, requestReject1)
+  .then(dispatchRequest, undefined)
+  .then(responseResolve1, responseReject1)
+  .then(responseResolve2, responseReject2)
+  .then(thenBlock).catch(catchBlock);
+```
+
+Note that,
+
+- The real request is not send immediately when you call `axios(config)`, because `dispatchRequest` is one of `then` handlers. Avoid doing synchronous time-consumed tasks after axios calls.
+
+```js
+axios(config);
+
+setTimeout(function () {
+  // do time-consumed tasks in next event loop
+});
+```
+
+- As well as `promise.then(onResolve, onReject)`, the reject handler can't catch errors thrown in the resolve handler of the same `use` pair. For example, `responseReject1` will not be invoked even if `responseResolve1` thrown something, but `responseReject2` can.
+- If you want to break the chain and trigger the final catch block, don't return quietly in any reject handlers.
+
+```js
+axios.interceptors.request.use(requestResolve, function () {
+  throw new Error('reason');
+
+  // or
+
+  return Promise.reject(new Error('reason'));
+});
+```
+
+- You can pass `async` functions (imaging them as functions return a Promise) as interceptor handlers, as long as the chain is connected correctly.
+
+```js
+axios.interceptors.request.use(async function (config) {
+  await something;
+  return 42;
+});
+
+// equals to
+
+axios.interceptors.request.use(function (config) {
+  return Promise.resolve(42);
+
+  // as well as
+
+  return 42;
+});
+```
+
+- The returned value of `use` is interceptor identifier, which is used to eject the interceptor, instead of the instance of interceptor.
+
+```js
+var id = axios.interceptors.request.use(requestResolve);
+axios.interceptors.eject(id);
+```
+
+- Comparing with the `use` sequences, the execution order of request interceptors is reversed. It is not straight-forward and a little strange, but has been there for many years.
+- Interceptors can't be inherited. You have to save them somewhere and register again.
+
 ### Handling Errors
+
+Nothing special has to be mentioned here. Read the official document is enough. Several kinds of errors may be caught. 
+
+- `AxiosError`, which is thrown by axios initiative and has `isAxiosError: true` as mark.
+- `Cancel`, which is caused by cancellation and can be recognized by `axios.isCancel` method.
+- Other errors that can be from anywhere. Find out the place carefully.
 
 ### Cancellation
 
+`axios.Cancel` is a simple wrapper of string, with a helper method (`axios.isCancel`) to recognize it. axios creates instance of it internally, so I don't know the meaning of exposing it.
+
+```js
+var cancelInst = new Cancel(message);
+axios.isCancel(cancelInst); // true
+```
+
+`axios.CancelToken` is a constructor, which is used to create instances as the value of `cancelToken` in request config. The principle is a little complex. Talk is cheap, let me show you codes.
+
+```js
+var outterCancelFn;
+
+config.cancelToken = new CancelToken(function executor(cancelFn) {
+  // 1. A Promise will be created in the constructor,
+  // and its `resolve` callback is saved temporarily
+
+  // 2. Wrap a callback `cancelFn` based on `resolve`,
+  // as the parameter of `executor`, and call `executor` immediately
+
+  /**
+   * In fact, `cancelFn` looks like,
+   *
+   * function cancelFn(message) {
+   *   // 1. create an instance of Cancel and save it as a member of CancelToken instance
+   *   // 2. invoke `resolve` with the saved Cancel instance
+   * }
+   */
+
+  // Save `cancelFn` in an outter value and call it with error message at any desirable time 
+  // Why can it cancel the request?
+  // 1. `dispatchRequest` will check the member field of CancelToken, and throw it if found
+  // 2. adapters will wait the Promise to be resolved, and throw the resolved value
+  outterCancelFn = cancelFn;
+})
+```
+
+`axios.CancelToken.source` is a factory method that does similar things.
+
+```js
+var source = CancelToken.source();
+// source.token, which is used as `config.cancelToken`
+// source.cancel, which is `cancelFn` in above example
+```
+
 ## Problem Solutions
 
+### Learn to triage issues first.
+
+Relax when you didn't receive the expected response. Some checkpoints and ideas can be,
+
+- Make sure the network and server works well, without problems like CORS/ATS blocking. It can be approved by switching to other request libraries, i.e. jQuery, curl.
+- Make sure the program runs like you designed, especially that Promise callbacks are connected well.
+- Make sure you used axios correctly, without misleading ways in this article. You can also search in Google, stackoverflow and old axios issues.
+  - Don't reply to issues with only "Same here" or "+1" (reactions are enough). That doesn't make sense, expecting for telling people "Oh, a new poor guy!". Try to give your **NEW** information and suggestions.
+  - Don't reply to closed issues unless they are unsolved without any reasons. Normally maintainers will ignore notifications from closed issues or pull requests.
+- If all of above answers is yes,
+  - compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. Charles or Wireshark) to capture packets, or at least debugging in adapters of axios.
+  - test similar scenarios by underlayer APIs (XMLHttpRequest or http).
+
+Finally, you still determine to shot an issue. OK, as long as keeping in mind how readers will feel when reading your issue and whether they can help.
+
+- **Is it reproducible and include enough information?** Follow the issue template is the most basic requirement. Try to give a minimum and runnable code example, instead of lots of personal descriptions. Once you mentioned the real adapter is xhr or http, it will reduce 50% of work to resolve the issue.
+- **Choices will always better than questions.** Giving possible solutions as far as you can is much more appreciated. Open source needs powers from the community, and readers/maintainers are just normal developers like you, who also likely don't know answers.
+
+### Contribute with a pull request.
+
+Great! Now you are the smartest man/woman in the world, because you find a bug/improvement that nobody realized before. Like other projects, axios provides its [Contributing guide](https://github.com/axios/axios/blob/master/CONTRIBUTING.md). And I want to emphasize some key points, which are also applicable to all open source projects.
+
+- **Testing is more important than codes.** Nobody will never make mistakes and can always cover every corner cases. Solid testings include both positive and negative cases.
+- **Change as less as possible.** Unless resulting in breaking features or introducing bugs, don't touch anywhere. Sometimes "sweet" enhancements will cause much more maintaining burdens.
+- **Be patient, persistent, and always keep an eye on it**. It may be hard, but still hope contributors treat them as targets. axios is famous but not actively maintained. Revising repeatedly according to review suggestions may take weeks or months. If anyone has time, feel free to leave comments to help review pull requests.
 
 [axios]: https://github.com/axios/axios
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
