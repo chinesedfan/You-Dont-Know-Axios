@@ -246,6 +246,62 @@ axios(url, {
 
 ### Config Defaults
 
+Final configs come from three parts, the axios default, the instance and the request.
+
+```js
+// `axios` only use the axios default as config defaults, see lib/defaults.js
+axios(requestConfig)
+
+// `axios.create` merges the axios default with `instanceConfig` as config defaults
+var instance = axios.create(instanceConfig)
+instance(requestConfig)
+```
+
+The main merging strategy changes among versions,
+
+- <= 0.18, as simple as `Object.assign`, which means values with the same key will be replaced by the later one. No deep merging for nested objects.
+- 0.19, introduces deep merging, but with some bugs. Arrays are merged like objects. Some config fields (i.e. `params`) should be supported but not, and custom default fields are lost totally.
+- &gt;= 0.20, hope axios can fix them and work perfectly again.
+
+#### More stories about `headers`
+
+For `headers`, it includes more things. You can set default headers for methods.
+
+```js
+// their priorities should be 1 < 2 < 3
+var instance = axios.create({
+  headers: {
+    // 1. common headers
+    common: {},
+    // 2. methods headers
+    get: {},
+    // 3. request specified
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+});
+
+// not `get` method, so only has 1 & 3, but without 2
+instance.post(config)
+```
+
+The extra design also brings about understanding pressures and shortcomings. Because you can't use a header with the same name with HTTP methods. But I think it should be avoided anyway.
+
+Let's ask a similar question like `method`, should `headers` be case sensitive or not? The answer is derived from HTTP specifications, too. The protocol has no requirements for it, which means case insensitive and everything will be send exactly as you requested to the server.
+
+After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use first-upper-letter word format with `-` connected, as axios doesn't handle case insensitive very well.
+
+- Request and response hooks, i.e. interceptors and `transformRequest`.
+- `lib/adapters/xhr.js`,
+  - `Content-Type` will be removed if `data` is FormData or undefined, in order to let the browser to set.
+  - `Authorization` will be generated from `auth`.
+  - `xsrfHeaderName` will be set with the value from cookie `xsrfCookieName`.
+- `lib/adapters/http.js`,
+  - `User-Agent` will be set if no user agent is provided.
+  - `Content-Length` will be set to match the request data.
+  - `Authorization` will be removed because `auth` is included in the options.
+  - `Proxy-Authorization` will be set if the proxy contains an `auth`.
+  - Response header `Content-Encoding` will be removed if decompressed.
+
 ### Interceptors
 
 From [Design Theories](#design-theories), we can know the position of interceptors. They are the beginning part (request interceptors) and the ending part (response interceptor) of the handlers chain.
