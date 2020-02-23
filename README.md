@@ -535,6 +535,17 @@ Great! Now you are the smartest man/woman in the world, because you find a bug/i
 - **Change as less as possible.** Unless resulting in breaking features or introducing bugs, don't touch anywhere. Sometimes "sweet" enhancements will cause much more maintaining burdens.
 - **Be patient, persistent, and always keep an eye on it**. It may be hard, but still hope contributors treat them as targets. axios is famous but not actively maintained. Revising repeatedly according to review suggestions may take weeks or months. If anyone has time, feel free to leave comments to help review pull requests.
 
+## About this repository
+[<ins>back to top</ins>](#you-dont-know-axios)
+
+Why not amend axios official document directly? This personal repository can be updated sooner, and affects axios reputations less. Feedbacks will also be shared with axios team timely.
+
+Welcome everyone to open issue or pull request to give suggestions.
+
+## License
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+
 [axios]: https://github.com/axios/axios
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
 [mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
