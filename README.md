@@ -231,7 +231,7 @@ axios({
 })
 ```
 
-If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to `follow-redirects`.
+If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to [follow-redirects](https://github.com/follow-redirects/follow-redirects).
 
 #### Receive special types of response by `responseType` and `responseEncoding`.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
