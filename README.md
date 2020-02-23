@@ -202,6 +202,38 @@ axios({
 })
 ```
 
+If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to `follow-redirects`.
+
+#### Receive special types of response by `responseType` and `responseEncoding`.
+
+Usually, the original response is text strings.
+
+In server side, you can also set `responseEncoding` to decode the response data with given character encoding. But I think it is something overlapped with `transformResponse`.
+
+#### Make things precisely, `transformRequest` and `transformResponse`.
+
+Transformers can be a function or an array. axios provides default `transformRequest` and `transformResponse`. Read their codes carefully to ensure they are as well as you think, or reset with your own ones. If you want to add features based on them, remember to concat with the default values.
+
+```js
+// do extra things after axios
+axios({
+  transformRequest: axios.defaults.transformRequest.concat([yourTransformRequest])
+})
+
+// or put yours first
+axios({
+  transformRequest: [yourTransformRequest].concat(axios.defaults.transformRequest)
+})
+```
+
+Transformers are executed in pipeline, without strange behavious like interceptors. And transformers require to be synchronous normal functions.
+
+> only applicable for request methods 'PUT', 'POST', 'PATCH' and 'DELETE'
+
+Transformers will always be executed, no matter what kind of `method` is and the response is succeeded or failed. axios says `transformRequest` is only applicable for some methods, but "applicable" here is something like "suggested but not disabled".
+
+Without transformers we can also achieve features by interceptors. But they are focused on request or response data, and closer to adapters.
+
 #### Why was't `timeout` fired at the right time?
 
 axios supports `timeout` by underlayer APIs, XMLHttpRequest's [timeout event](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout_event) and [request.setTimeout](https://nodejs.org/api/http.html#http_request_settimeout_timeout_callback) in Node.js. You may face browser compatibilities problems or Node.js environments problems.
