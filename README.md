@@ -29,7 +29,7 @@ The most impressive design in axios is its flexible architecture, including [bas
 
 ### Promise Based
 
-Make sure you are familiar with asynchronous programming when using axios, especially for [Promise A+][https://promisesaplus.com/] and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). Because axios connects internal things by Promise.
+Make sure you are familiar with asynchronous programming when using axios, especially for [Promise A+](https://promisesaplus.com/) and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). Because axios connects internal things by Promise.
 
 ## Usage Knowledges
 [<ins>back to top</ins>](#you-dont-know-axios)
