@@ -288,7 +288,7 @@ The extra design also brings about understanding pressures and shortcomings. Bec
 
 Let's ask a similar question like `method`, should `headers` be case sensitive or not? The answer is derived from HTTP specifications, too. The protocol has no requirements for it, which means case insensitive and everything will be send exactly as you requested to the server.
 
-After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use first-upper-letter word format with `-` connected, as axios doesn't handle case insensitive very well.
+After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use first-upper-letter word format with hyphen connected, as axios doesn't handle case insensitive very well.
 
 - Request and response hooks, i.e. interceptors and `transformRequest`.
 - `lib/adapters/xhr.js`,
@@ -444,9 +444,12 @@ Relax when you didn't receive the expected response. Some checkpoints and ideas 
 - Make sure you used axios correctly, without misleading ways in this article. You can also search in Google, stackoverflow and old axios issues.
   - Don't reply to issues with only "Same here" or "+1" (reactions are enough). That doesn't make sense, expecting for telling people "Oh, a new poor guy!". Try to give your **NEW** information and suggestions.
   - Don't reply to closed issues unless they are unsolved without any reasons. Normally maintainers will ignore notifications from closed issues or pull requests.
-- If all of above answers is yes,
-  - compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. Charles or Wireshark) to capture packets, or at least debugging in adapters of axios.
-  - test similar scenarios by underlayer APIs (XMLHttpRequest or http).
+
+If all of above answers is yes,
+
+- compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. Charles or Wireshark) to capture packets, or at least debugging in adapters of axios.
+- test similar scenarios by underlayer APIs (XMLHttpRequest or http).
+  - For example, `onUploadProgress` and `onDownloadProgress` depend on browsers implementations, which are nealy out of control of axios.
 
 Finally, you still determine to shot an issue. OK, as long as keeping in mind how readers will feel when reading your issue and whether they can help.
 
