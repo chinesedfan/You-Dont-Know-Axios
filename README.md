@@ -32,8 +32,19 @@ The most impressive design in axios is its flexible architecture, including [bas
 Make sure you are familiar with asynchronous programming when using axios, especially for [Promise A+][https://promisesaplus.com/] and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). Because axios connects internal things by Promise.
 
 ## Usage Knowledges
+[<ins>back to top</ins>](#you-dont-know-axios)
 
 Let's follow the structure of official document. In each topic, I will give some examples to explain the misleading or unclear points. To keep this document not out-of-date, the detailed logic will not be introduced too much. It may change between different versions, please read specific axios source codes.
+
+Quick links,
+
+- [axios API](#axios-api)
+- [Request Config](#request-config)
+- [Response Schema](#response-schema)
+- [Config Defaults](#config-defaults)
+- [Interceptors](#interceptors)
+- [Handling Errors](#handling-errors)
+- [Cancellation](#cancellation)
 
 ### axios API
 
@@ -61,6 +72,7 @@ axios.post/put/patch(url, data, config) // third
 ```
 
 ### Request Config
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 <img src="assets/axios-configs.png" width="80%" />
 
@@ -69,6 +81,19 @@ The above diagram shows all request configs.
 - The left dotted box contains 4 main configs(`method`, `url`, `headers`, `data`), which are corresponding to 4 parts in HTTP request format, and their related things.
 - The right dotted box is `adapter` related. A separate line divides configs into browser only(`xhr.js`) and server only(`http.js`). Others configs should be applicable to both sides, but are not fully supported.
 - The rest is configs that control the process, including cancellation, timeout and response transforming.
+
+<a name="quick-links"></a>Quick links,
+
+- [Should `method` be lower cases or upper?](#should-method-be-lower-cases-or-upper)
+- [Understand how `baseURL` concats with `url`.](#understand-how-baseurl-concats-with-url)
+- [Nightmares of `headers`: CORS, cookies and `auth`.](#nightmares-of-headers-cors-cookies-and-auth)
+- [Distinguish `params` with `data`.](#distinguish-params-with-data)
+- [Serialize `params` correctly.](#serialize-params-correctly)
+- [Submit `data` successfully.](#submit-data-successfully)
+- [Receive special types of response by `responseType` and `responseEncoding`.](#receive-special-types-of-response-by-responsetype-and-responseencoding)
+- [Make things precisely, `transformRequest` and `transformResponse`.](#make-things-precisely-transformrequest-and-transformresponse)
+- [Why was't `timeout` fired at the right time?](#why-wast-timeout-fired-at-the-right-time)
+- [Do you use the right `adapter`?](#do-you-use-the-right-adapter)
 
 #### Should `method` be lower cases or upper?
 
@@ -88,6 +113,7 @@ axios({
 ```
 
 #### Nightmares of `headers`: CORS, cookies and `auth`.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 First of all, `headers` in axios are request headers, not response headers. Therefore, [CORS][mdn-cors] related problems can't be resolved by adding values in `headers`. Considering many users are confused with CORS, I'd like to give some tips about it.
 
@@ -106,6 +132,7 @@ I prefer to set `Authorization` manually in `headers` to authorize, unless you k
 Merging of headers will be introduced in [Config Defaults](#more-stories-about-headers) section.
 
 #### Distinguish `params` with `data`.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 When you want to send request data, read the endpoint document carefully to make sure where it should be.
 
@@ -130,6 +157,7 @@ axios({
 ```
 
 #### Serialize `params` correctly.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 The default serialization can only handle simple `params`. If you find out the built url is not as expected, especially when your `params` contains arrays or nested objects as values, you may need to set `paramsSerializer`.
 
@@ -153,6 +181,7 @@ axios(url, {
 ```
 
 #### Submit `data` successfully.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 Here must be the most severely afflicted area. Lots of axios issues seek help due to it.
 
@@ -205,12 +234,14 @@ axios({
 If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to `follow-redirects`.
 
 #### Receive special types of response by `responseType` and `responseEncoding`.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 Usually, the original response is text strings.
 
 In server side, you can also set `responseEncoding` to decode the response data with given character encoding. But I think it is something overlapped with `transformResponse`.
 
 #### Make things precisely, `transformRequest` and `transformResponse`.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 Transformers can be a function or an array. axios provides default `transformRequest` and `transformResponse`. Read their codes carefully to ensure they are as well as you think, or reset with your own ones. If you want to add features based on them, remember to concat with the default values.
 
@@ -235,6 +266,7 @@ Transformers will always be executed, no matter what kind of `method` is and the
 Without transformers we can also achieve features by interceptors. But they are focused on request or response data, and closer to adapters.
 
 #### Why was't `timeout` fired at the right time?
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 axios supports `timeout` by underlayer APIs, XMLHttpRequest's [timeout event](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout_event) and [request.setTimeout](https://nodejs.org/api/http.html#http_request_settimeout_timeout_callback) in Node.js. You may face browser compatibilities problems or Node.js environments problems.
 
@@ -245,6 +277,7 @@ Now axios doesn't have a convenient way to validate a timeout error, except for 
 Someone wishes other types of timeout. Looks like [got](https://github.com/sindresorhus/got#timeout) provides them very well.
 
 #### Do you use the right `adapter`?
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
 For environments like [Electron](https://www.electronjs.org/) or [Jest](https://jestjs.io/), both [XMLHttpRequest][mdn-xhr] and [process](https://nodejs.org/api/process.html) are existed in the global context. axios may not select the right `adapter` as you want.
 
@@ -263,6 +296,7 @@ axios({
 If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in [npm](https://www.npmjs.com/).
 
 ### Response Schema
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 You may expect to also get a response when non-2XX status code returns. Remind that `validateStatus` checks status code first. See [Request Config](#request-config).
 
@@ -277,6 +311,7 @@ axios(url, {
 ```
 
 ### Config Defaults
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 Final configs come from three parts, the axios default, the instance and the request.
 
@@ -335,6 +370,7 @@ After configed, `headers` may be modified in many stages. If your headers become
   - Response header `Content-Encoding` will be removed if decompressed.
 
 ### Interceptors
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 From [Design Theories](#design-theories), we can know the position of interceptors. They are the beginning part (request interceptors) and the ending part (response interceptor) of the handlers chain.
 
@@ -412,6 +448,7 @@ axios.interceptors.eject(id);
 - Interceptors can't be inherited. You have to save them somewhere and register again.
 
 ### Handling Errors
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 Nothing special has to be mentioned here. Read the official document is enough. Several kinds of errors may be caught. 
 
@@ -420,6 +457,7 @@ Nothing special has to be mentioned here. Read the official document is enough. 
 - Other errors that can be from anywhere. Find out the place carefully.
 
 ### Cancellation
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
 
 `axios.Cancel` is a simple wrapper of string, with a helper method (`axios.isCancel`) to recognize it. axios creates instance of it internally, so I don't know the meaning of exposing it.
 
@@ -466,6 +504,7 @@ var source = CancelToken.source();
 ```
 
 ## Problem Solutions
+[<ins>back to top</ins>](#you-dont-know-axios)
 
 ### Learn to triage issues first.
 
