@@ -25,11 +25,11 @@ I'd like to divide things into 3 questions,
 
 ### Keep Simple
 
-The most impressive design in axios is its flexible architecture, including basic configs, interceptors, transformers and adapters. The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, think twice whether it is important and common enough to be added, or it can be solved by current hooks.
+The most impressive design in axios is its flexible architecture, including [basic configs](#request-config), [interceptors](#interceptors), [transformers](#make-things-precisely-transformrequest-and-transformresponse) and [adapters](#do-you-use-the-right-adapter). The core is simple and stable, while users can achieve customized functionalities by providing their own implementations. Before requesting for new features, think twice whether it is important and common enough to be added, or it can be solved by current hooks.
 
 ### Promise Based
 
-Make sure you are familiar with asynchronous programming when using axios, especially for Promise and async/await. Because axios connects internal things by Promise.
+Make sure you are familiar with asynchronous programming when using axios, especially for [Promise A+][https://promisesaplus.com/] and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). Because axios connects internal things by Promise.
 
 ## Usage Knowledges
 
@@ -72,7 +72,7 @@ The above diagram shows all request configs.
 
 #### Should `method` be lower cases or upper?
 
-According to HTTP specifications, the method field must be all upper cases. The default 2 adapters have done that internally. So axios users can use case-insensitive `method`.
+According to [HTTP specifications](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods), the method field must be all upper cases. The default 2 adapters have done that internally. So axios users can use case-insensitive `method`.
 
 I used to worry about headers merging. But in fact, axios will convert received `method` to lower cases and keep cases unchanged until sending out.
 
@@ -103,7 +103,7 @@ I prefer to set `Authorization` manually in `headers` to authorize, unless you k
 - If no `auth` was set, http adapter will try to extract user and password from the url, while xhr adapter does nothing.
 - And xhr adapter may not able to handle special characters well.
 
-Merging of headers will be introduced in [Config Defaults](#config-defaults) section.
+Merging of headers will be introduced in [Config Defaults](#more-stories-about-headers) section.
 
 #### Distinguish `params` with `data`.
 
@@ -181,7 +181,7 @@ axios({
 
 - `application/x-www-form-urlencoded`
 
-As the name indicated, `data` should be URL/URI encoded. If `data` is an instance of URLSearchParams, the default `transformRequest` will set Content-Type to it automatically.
+As the name indicated, `data` should be URL/URI encoded. If `data` is an instance of [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams), the default `transformRequest` will set Content-Type to it automatically.
 
 Note that it treats numbers as strings, while `application/json` is type-sensitive.
 
@@ -226,7 +226,7 @@ axios({
 })
 ```
 
-Transformers are executed in pipeline, without strange behavious like interceptors. And transformers require to be synchronous normal functions.
+Transformers are executed in pipeline, without [strange behavious](#interceptors) like interceptors. And transformers require to be synchronous normal functions.
 
 > only applicable for request methods 'PUT', 'POST', 'PATCH' and 'DELETE'
 
@@ -246,7 +246,7 @@ Someone wishes other types of timeout. Looks like [got](https://github.com/sindr
 
 #### Do you use the right `adapter`?
 
-For environments like Electron or Jest, both XMLHttpRequest and process are existed in the global context. axios may not select the right `adapter` as you want.
+For environments like [Electron](https://www.electronjs.org/) or [Jest](https://jestjs.io/), both [XMLHttpRequest][mdn-xhr] and [process](https://nodejs.org/api/process.html) are existed in the global context. axios may not select the right `adapter` as you want.
 
 ```js
 axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
@@ -260,7 +260,7 @@ axios({
 })
 ```
 
-If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in npm.
+If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in [npm](https://www.npmjs.com/).
 
 ### Response Schema
 
@@ -318,9 +318,9 @@ instance.post(config)
 
 The extra design also brings about understanding pressures and shortcomings. Because you can't use a header with the same name with HTTP methods. But I think it should be avoided anyway.
 
-Let's ask a similar question like `method`, should `headers` be case sensitive or not? The answer is derived from HTTP specifications, too. The protocol has no requirements for it, which means case insensitive and everything will be send exactly as you requested to the server.
+Let's ask a similar question like `method`, should `headers` be case sensitive or not? The answer is derived from [HTTP specifications](https://developer.mozilla.org/en-US/docs/Web/API/Headers), too. The protocol has no requirements for it, which means case insensitive and everything will be send exactly as you requested to the server.
 
-After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use first-upper-letter word format with hyphen connected, as axios doesn't handle case insensitive very well.
+After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use hyphen connected [Pascal case](https://wiki.c2.com/?PascalCase), as axios doesn't handle case insensitive very well.
 
 - Request and response hooks, i.e. interceptors and `transformRequest`.
 - `lib/adapters/xhr.js`,
@@ -471,16 +471,16 @@ var source = CancelToken.source();
 
 Relax when you didn't receive the expected response. Some checkpoints and ideas can be,
 
-- Make sure the network and server works well, without problems like CORS/ATS blocking. It can be approved by switching to other request libraries, i.e. jQuery, curl.
+- Make sure the network and server works well, without problems like [CORS][mdn-cors]/[ATS](https://developers.google.com/admob/ios/app-transport-security). It can be approved by switching to other request libraries, i.e. [jQuery](https://jquery.com/), [cURL](https://en.wikipedia.org/wiki/CURL).
 - Make sure the program runs like you designed, especially that Promise callbacks are connected well.
-- Make sure you used axios correctly, without misleading ways in this article. You can also search in Google, stackoverflow and old axios issues.
+- Make sure you used axios correctly, without misleading ways in this article. You can also search in [Google](https://www.google.com/), [stackoverflow](https://stackoverflow.com/) and [old axios issues](https://github.com/axios/axios/issues).
   - Don't reply to issues with only "Same here" or "+1" (reactions are enough). That doesn't make sense, expecting for telling people "Oh, a new poor guy!". Try to give your **NEW** information and suggestions.
   - Don't reply to closed issues unless they are unsolved without any reasons. Normally maintainers will ignore notifications from closed issues or pull requests.
 
 If all of above answers is yes,
 
-- compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. Charles or Wireshark) to capture packets, or at least debugging in adapters of axios.
-- test similar scenarios by underlayer APIs (XMLHttpRequest or http).
+- compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. [Charles](https://www.charlesproxy.com/) or [Wireshark](https://www.wireshark.org/)) to capture packets, or at least debugging in adapters of axios.
+- test similar scenarios by underlayer APIs ([XMLHttpRequest][mdn-xhr] or [http](https://nodejs.org/api/http.html)).
   - For example, `onUploadProgress` and `onDownloadProgress` depend on browsers implementations, which are nealy out of control of axios.
 
 Finally, you still determine to shot an issue. OK, as long as keeping in mind how readers will feel when reading your issue and whether they can help.
@@ -500,5 +500,6 @@ Great! Now you are the smartest man/woman in the world, because you find a bug/i
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
 [mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 [mdn-cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+[mdn-xhr]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
 [oop]: https://en.wikipedia.org/wiki/Object-oriented_programming
 [postman]: https://www.postman.com/
