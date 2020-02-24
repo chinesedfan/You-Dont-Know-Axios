@@ -94,6 +94,7 @@ The above diagram shows all request configs.
 - [Make things precisely, `transformRequest` and `transformResponse`.](#make-things-precisely-transformrequest-and-transformresponse)
 - [Why was't `timeout` fired at the right time?](#why-wast-timeout-fired-at-the-right-time)
 - [Do you use the right `adapter`?](#do-you-use-the-right-adapter)
+- [Server side only: transports, agents, proxies and redirections.](#server-side-only-transports-agents-proxies-and-redirections)
 
 #### Should `method` be lower cases or upper?
 
@@ -231,7 +232,7 @@ axios({
 })
 ```
 
-If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to [follow-redirects](https://github.com/follow-redirects/follow-redirects).
+If `data` is too large, you can set `maxContentLength` as a hacked way to allow that when using http adapter ( and `maxRedirects` is not zero and without customized `transport`). `maxContentLength` is designed as limitation of the response content. axios sends it mistakenly as `maxBodyLength` to [follow-redirects][follow-redirects].
 
 #### Receive special types of response by `responseType` and `responseEncoding`.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
@@ -294,6 +295,13 @@ axios({
 ```
 
 If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in [npm](https://www.npmjs.com/).
+
+#### Server side only: transports, agents, proxies and redirections.
+[<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
+
+Time to test your skills about Node.js' [http](https://nodejs.org/api/http.html) and [https](https://nodejs.org/api/https.html), especially for [options](https://nodejs.org/api/http.html#http_http_request_options_callback) of their `request` method. Note that axios only supports partial of them.
+
+The transport is determined by the url protocol (starting with `https` or not). But usually, the native http/https transport is wrapped by [follow-redirects][follow-redirects], which is an independent open source library that handls redirections, unless you have set `maxRedirects` to zero. You can also choose your own transport by `transport` in request config.
 
 ### Response Schema
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
@@ -547,6 +555,7 @@ Welcome everyone to open issue or pull request to give suggestions.
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
 
 [axios]: https://github.com/axios/axios
+[follow-redirects]: https://github.com/follow-redirects/follow-redirects
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
 [mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 [mdn-cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
