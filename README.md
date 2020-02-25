@@ -237,9 +237,69 @@ If `data` is too large, you can set `maxContentLength` as a hacked way to allow 
 #### Receive special types of response by `responseType` and `responseEncoding`.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
-Usually, the original response is text strings.
+> make sure that the server is actually sending a response compatible to that format.
 
-In server side, you can also set `responseEncoding` to decode the response data with given character encoding. But I think it is something overlapped with `transformResponse`.
+Usually, the original response is text strings. `responseType` is an option provided by [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType), and axios adapts it properly in http adapter. It is often useful to get different formats data and download files.
+
+- `text`.
+- `json`, the default value in axios. If an empty string is set, XMLHttpRequest assumes it as `text` type. But axios does some tricks in the default `transformResponse`.
+- `arraybuffer`, returns [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) (browser side) or [Buffer](https://nodejs.org/api/buffer.html) (server side). Of course, it will make `responseEncoding` useless.
+
+```js
+// transmit an image from somewhere in `express` server (https://www.npmjs.com/package/express)
+axios.get(imageUrl, {
+  responseType: 'arraybuffer'
+})
+  .then(function (response) {
+    // `res` is the callback parameter of `express` handle
+    res.type('image/jpeg');
+    res.end(response.data, 'binary');
+  });
+```
+
+- `document`(**browser only**), returns [Document](https://developer.mozilla.org/en-US/docs/Web/API/Document) or [XMLDocument](https://developer.mozilla.org/en-US/docs/Web/API/XMLDocument).
+- `blob`(**browser only**), returns [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob). You can save it with any suitable methods.
+
+```js
+// show the downloaded image by an `img` tag
+axios.get(imageUrl, {
+  responseType: 'blob'
+})
+  .then(function (response) {
+  	var reader = new FileReader(); // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/FileReader
+	  reader.readAsDataURL(response.data); 
+	  reader.onload = function() {
+      var imageDataUrl = reader.result;
+      // `imageEl` is the DOM element
+	    imageEl.setAttribute('src', imageDataUrl);
+	  };
+  });
+```
+
+- `stream`(**server only**), extra enum added by axios. It makes the callback parameter of [response event](https://nodejs.org/api/http.html#http_event_response) as `response.data`.
+
+```js
+axios.get(imageUrl, {
+  responseType: 'stream'
+})
+  .then(function (response) {
+    // it implements the Readable Stream interface
+    response.data.pipe(somewhere);
+  });
+```
+
+In server side, you can also set `responseEncoding` to decode the response Buffer data with given character encoding. But I think it is something overlapped with `transformResponse`.
+
+Something else worthy to be mentioned is configing the right `Accept` in `headers`. See more in [IANA](https://www.iana.org/assignments/media-types/media-types.xhtml#application).
+
+```js
+axios.get(url, {
+  responseType: 'blob',
+  headers: {
+    Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
+  }
+})
+```
 
 #### Make things precisely, `transformRequest` and `transformResponse`.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
@@ -301,7 +361,9 @@ If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/We
 
 Time to test your skills about Node.js' [http](https://nodejs.org/api/http.html) and [https](https://nodejs.org/api/https.html), especially for [options](https://nodejs.org/api/http.html#http_http_request_options_callback) of their `request` method. Note that axios only supports partial of them.
 
-The transport is determined by the url protocol (starting with `https` or not). But usually, the native http/https transport is wrapped by [follow-redirects][follow-redirects], which is an independent open source library that handls redirections, unless you have set `maxRedirects` to zero. You can also choose your own transport by `transport` in request config.
+The transport is determined by the url protocol (starting with `https` or not). But usually, the native http/https transport is wrapped by [follow-redirects][follow-redirects], which is an independent open source library that handles redirections, unless you have set `maxRedirects` to zero. You can also choose your own transport by `transport` in request config.
+
+Browsers handle redirections automatically. axios is out-of-control for that.
 
 ### Response Schema
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
