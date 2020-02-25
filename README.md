@@ -191,6 +191,9 @@ Here must be the most severely afflicted area. Lots of axios issues seek help du
 So, `data` must match with the header [Content Type][mdn-content-type]. Followings are its common values.
 
 - `text/plain`
+
+Simple text.
+
 - `application/json`
 
 In this case, `data` should be JSON format. If `data` is an object (not null), the default `transformRequest` will set Content-Type to it automatically.
@@ -429,7 +432,7 @@ After configed, `headers` may be modified in many stages. If your headers become
 
 - Request and response hooks, i.e. interceptors and `transformRequest`.
 - `lib/adapters/xhr.js`,
-  - `Content-Type` will be removed if `data` is FormData or undefined, in order to let the browser to set.
+  - `Content-Type` will be removed if `data` is [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData) or undefined, in order to let the browser to set.
   - `Authorization` will be generated from `auth`.
   - `xsrfHeaderName` will be set with the value from cookie `xsrfCookieName`.
 - `lib/adapters/http.js`,
@@ -582,7 +585,7 @@ Relax when you didn't receive the expected response. Some checkpoints and ideas 
 
 - Make sure the network and server works well, without problems like [CORS][mdn-cors]/[ATS](https://developers.google.com/admob/ios/app-transport-security). It can be approved by switching to other request libraries, i.e. [jQuery](https://jquery.com/), [cURL](https://en.wikipedia.org/wiki/CURL).
 - Make sure the program runs like you designed, especially that Promise callbacks are connected well.
-- Make sure you used axios correctly, without misleading ways in this article. You can also search in [Google](https://www.google.com/), [stackoverflow](https://stackoverflow.com/) and [old axios issues](https://github.com/axios/axios/issues).
+- Make sure you used axios correctly, without misleading ways in this article. You can also search in [Google](https://www.google.com/), [stackoverflow](https://stackoverflow.com/) and [axios issues](https://github.com/axios/axios/issues).
   - Don't reply to issues with only "Same here" or "+1" (reactions are enough). That doesn't make sense, expecting for telling people "Oh, a new poor guy!". Try to give your **NEW** information and suggestions.
   - Don't reply to closed issues unless they are unsolved without any reasons. Normally maintainers will ignore notifications from closed issues or pull requests.
 
@@ -610,7 +613,7 @@ Great! Now you are the smartest man/woman in the world, because you find a bug/i
 
 Why not amend axios official document directly? This personal repository can be updated sooner, and affects axios reputations less. Feedbacks will also be shared with axios team timely.
 
-Welcome everyone to open issue or pull request to give suggestions.
+Welcome everyone to open issue or pull request to give suggestions for this document. But don't ask axios questions here.
 
 ## License
 
