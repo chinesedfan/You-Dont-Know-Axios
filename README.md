@@ -54,7 +54,7 @@ Using terms in [object-oriented programming][oop], `Axios` is the *class* which 
 
 Before returning, `axios.create` will bind the instance to `Axios.prototype.request`, so `axios` is also a function same with `Axios.prototype.request`.
 
-Something special is that, `axios` has lots of *static* members and methods beside of `axios.create`, i.e. `axios.Cancel/CancelToken/isCancel` and `axios.all/spread`.
+Something special is that, `axios` has lots of *static* members and methods besides of `axios.create`, i.e. `axios.Cancel/CancelToken/isCancel` and `axios.all/spread`.
 
 ```js
 axios.Cancel // object
@@ -121,14 +121,14 @@ First of all, `headers` in axios are request headers, not response headers. Ther
 - CORS problems are browser only, when your site requests a resource that has a different origin (domain, protocol, or port) from its own. Node.js scripts and [Postman][postman] don't have this kind of trouble.
 - Sometimes, take it easy for those additional OPTIONS requests. They are [preflighted requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Preflighted_requests), which are very normal things and not strange bugs caused by axios.
 - If some headers couldn't be accessed in your codes, even though they were visible in the network panel, please make sure the server responses correct [Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Access-Control-Expose-Headers) header.
-- As [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Credentialed_requests_and_wildcards) says, when responding to a credentialed request, the server must specify an origin in the value of the `Access-Control-Allow-Origin header`, instead of specifying the "*" wildcard. Or cookies will not be send, even though `withCredentials` has been set true in axios.
+- As [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Credentialed_requests_and_wildcards) says, when responding to a credentialed request, the server must specify an origin in the value of the `Access-Control-Allow-Origin header`, instead of specifying the "*" wildcard. Or cookies will not be sent, even though `withCredentials` has been set true in axios.
 
-Some users complains cookies can't be set when the server has responded `Set-Cookie` header. You may check whether they are [HttpOnly or Secure](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies), and scopes of cookies.
+Some users complain cookies can't be set when the server has responded `Set-Cookie` header. You may check whether they are [HttpOnly or Secure](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies), and scopes of cookies.
 
 I prefer to set `Authorization` manually in `headers` to authorize, unless you know exactly what happens in axios. Here are some warnings for users,
 
 - If no `auth` was set, http adapter will try to extract user and password from the url, while xhr adapter does nothing.
-- And xhr adapter may not able to handle special characters well.
+- And xhr adapter may not be able to handle special characters well.
 
 Merging of headers will be introduced in [Config Defaults](#more-stories-about-headers) section.
 
@@ -321,13 +321,13 @@ axios({
 })
 ```
 
-Transformers are executed in pipeline, without [strange behavious](#interceptors) like interceptors. And transformers require to be synchronous normal functions.
+Transformers are executed in pipeline, without [strange behaviours](#interceptors) like interceptors. And transformers require to be synchronous normal functions.
 
 > only applicable for request methods 'PUT', 'POST', 'PATCH' and 'DELETE'
 
 Transformers will always be executed, no matter what kind of `method` is and the response is succeeded or failed. axios says `transformRequest` is only applicable for some methods, but "applicable" here is something like "suggested but not disabled".
 
-Without transformers we can also achieve features by interceptors. But they are focused on request or response data, and closer to adapters.
+Without transformers we can also achieve features by interceptors. But they focuse on request or response data, and closer to adapters.
 
 #### Why was't `timeout` fired at the right time?
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
@@ -357,16 +357,16 @@ axios({
 })
 ```
 
-If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have write one by yourself or search in [npm](https://www.npmjs.com/).
+If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have to write one by yourself or search in [npm](https://www.npmjs.com/).
 
 #### Server side only: transports, agents, proxies and redirections.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
-Time to test your skills about Node.js' [http](https://nodejs.org/api/http.html) and [https](https://nodejs.org/api/https.html), especially for [options](https://nodejs.org/api/http.html#http_http_request_options_callback) of their `request` method. Note that axios only supports partial of them.
+Time to test your skills about Node.js' [http](https://nodejs.org/api/http.html) and [https](https://nodejs.org/api/https.html), especially for [options](https://nodejs.org/api/http.html#http_http_request_options_callback) of their `request` method. Note that axios only supports part of them.
 
 The transport is determined by the url protocol (starting with `https` or not). But usually, the native http/https transport is wrapped by [follow-redirects][follow-redirects], which is an independent open source library that handles redirections, unless you have set `maxRedirects` to zero. You can also choose your own transport by `transport` in request config.
 
-Browsers handle redirections automatically. axios is out-of-control for that.
+Browsers handle redirections automatically. axios has no control for that.
 
 ### Response Schema
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
@@ -426,15 +426,15 @@ instance.post(config)
 
 The extra design also brings about understanding pressures and shortcomings. Because you can't use a header with the same name with HTTP methods. But I think it should be avoided anyway.
 
-Let's ask a similar question like `method`, should `headers` be case sensitive or not? The answer is derived from [HTTP specifications](https://developer.mozilla.org/en-US/docs/Web/API/Headers), too. The protocol has no requirements for it, which means case insensitive and everything will be send exactly as you requested to the server.
+Let's ask a similar question like `method`, should `headers` be case-sensitive or not? The answer is derived from [HTTP specifications](https://developer.mozilla.org/en-US/docs/Web/API/Headers), too. The protocol has no requirements for it, which means case-insensitive and everything will be sent exactly as you requested to the server.
 
-After configed, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use hyphen connected [Pascal case](https://wiki.c2.com/?PascalCase), as axios doesn't handle case insensitive very well.
+After configured, `headers` may be modified in many stages. If your headers become what you don't expect, please check and debug them carefully. Suggest to use hyphen connected [Pascal case](https://wiki.c2.com/?PascalCase), as axios doesn't handle case-insensitive very well.
 
 - Request and response hooks, i.e. interceptors and `transformRequest`.
 - `lib/adapters/xhr.js`,
   - `Content-Type` will be removed if `data` is [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData) or undefined, in order to let the browser to set.
   - `Authorization` will be generated from `auth`.
-  - `xsrfHeaderName` will be set with the value from cookie `xsrfCookieName`.
+  - `xsrfHeaderName` will be set with the value of cookie `xsrfCookieName`.
 - `lib/adapters/http.js`,
   - `User-Agent` will be set if no user agent is provided.
   - `Content-Length` will be set to match the request data.
@@ -468,7 +468,7 @@ Promise.resolve(config)
 
 Note that,
 
-- The real request is not send immediately when you call `axios(config)`, because `dispatchRequest` is one of `then` handlers. Avoid doing synchronous time-consumed tasks after axios calls.
+- The real request is not sent immediately when you call `axios(config)`, because `dispatchRequest` is one of `then` handlers. Avoid doing synchronous time-consumed tasks after axios calls.
 
 ```js
 axios(config);
@@ -478,7 +478,7 @@ setTimeout(function () {
 });
 ```
 
-- As well as `promise.then(onResolve, onReject)`, the reject handler can't catch errors thrown in the resolve handler of the same `use` pair. For example, `responseReject1` will not be invoked even if `responseResolve1` thrown something, but `responseReject2` can.
+- As well as `promise.then(onResolve, onReject)`, the rejection handler can't catch errors thrown by the resolve handler of the same `use` pair. For example, `responseReject1` will not be invoked even if `responseResolve1` thrown something, but `responseReject2` can.
 - If you want to break the chain and trigger the final catch block, don't return quietly in any reject handlers.
 
 ```js
@@ -527,7 +527,7 @@ Nothing special has to be mentioned here. Read the official document is enough. 
 
 - `AxiosError`, which is thrown by axios initiative and has `isAxiosError: true` as mark.
 - `Cancel`, which is caused by cancellation and can be recognized by `axios.isCancel` method.
-- Other errors that can be from anywhere. Find out the place carefully.
+- Other errors that can be thrown from anywhere. Find out the place carefully.
 
 ### Cancellation
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
@@ -542,7 +542,7 @@ axios.isCancel(cancelInst); // true
 `axios.CancelToken` is a constructor, which is used to create instances as the value of `cancelToken` in request config. The principle is a little complex. Talk is cheap, let me show you codes.
 
 ```js
-var outterCancelFn;
+var outerCancelFn;
 
 config.cancelToken = new CancelToken(function executor(cancelFn) {
   // 1. A Promise will be created in the constructor,
@@ -560,11 +560,11 @@ config.cancelToken = new CancelToken(function executor(cancelFn) {
    * }
    */
 
-  // Save `cancelFn` in an outter value and call it with error message at any desirable time 
+  // Save `cancelFn` in an outer value and call it with error message at any desirable time 
   // Why can it cancel the request?
   // 1. `dispatchRequest` will check the member field of CancelToken, and throw it if found
   // 2. adapters will wait the Promise to be resolved, and throw the resolved value
-  outterCancelFn = cancelFn;
+  outerCancelFn = cancelFn;
 })
 ```
 
@@ -583,7 +583,7 @@ var source = CancelToken.source();
 
 Relax when you didn't receive the expected response. Some checkpoints and ideas can be,
 
-- Make sure the network and server works well, without problems like [CORS][mdn-cors]/[ATS](https://developers.google.com/admob/ios/app-transport-security). It can be approved by switching to other request libraries, i.e. [jQuery](https://jquery.com/), [cURL](https://en.wikipedia.org/wiki/CURL).
+- Make sure the network and server work well, without problems like [CORS][mdn-cors]/[ATS](https://developers.google.com/admob/ios/app-transport-security). It can be approved by switching to other request libraries, i.e. [jQuery](https://jquery.com/), [cURL](https://en.wikipedia.org/wiki/CURL).
 - Make sure the program runs like you designed, especially that Promise callbacks are connected well.
 - Make sure you used axios correctly, without misleading ways in this article. You can also search in [Google](https://www.google.com/), [stackoverflow](https://stackoverflow.com/) and [axios issues](https://github.com/axios/axios/issues).
   - Don't reply to issues with only "Same here" or "+1" (reactions are enough). That doesn't make sense, expecting for telling people "Oh, a new poor guy!". Try to give your **NEW** information and suggestions.
@@ -593,19 +593,19 @@ If all of above answers is yes,
 
 - compare the **REAL** requested url and headers with required and find out why. "REAL" means reading from browsers' network panel, using softwares (i.e. [Charles](https://www.charlesproxy.com/) or [Wireshark](https://www.wireshark.org/)) to capture packets, or at least debugging in adapters of axios.
 - test similar scenarios by underlayer APIs ([XMLHttpRequest][mdn-xhr] or [http](https://nodejs.org/api/http.html)).
-  - For example, `onUploadProgress` and `onDownloadProgress` depend on browsers implementations, which are nealy out of control of axios.
+  - For example, `onUploadProgress` and `onDownloadProgress` depend on browsers implementations, which are nearly out of control of axios.
 
 Finally, you still determine to shot an issue. OK, as long as keeping in mind how readers will feel when reading your issue and whether they can help.
 
-- **Is it reproducible and include enough information?** Follow the issue template is the most basic requirement. Try to give a minimum and runnable code example, instead of lots of personal descriptions. Once you mentioned the real adapter is xhr or http, it will reduce 50% of work to resolve the issue.
-- **Choices will always better than questions.** Giving possible solutions as far as you can is much more appreciated. Open source needs powers from the community, and readers/maintainers are just normal developers like you, who also likely don't know answers.
+- **Is it reproducible and includes enough information?** Follow the issue template is the most basic requirement. Try to give a minimum and runnable code example, instead of lots of personal descriptions. Once you mentioned the real adapter is xhr or http, it will reduce 50% of work to resolve the issue.
+- **Choices will always be better than questions.** Giving possible solutions as far as you can is much more appreciated. Open source needs powers from the community, and readers/maintainers are just normal developers like you, who also likely don't know answers.
 
 ### Contribute with a pull request.
 
 Great! Now you are the smartest man/woman in the world, because you find a bug/improvement that nobody realized before. Like other projects, axios provides its [Contributing guide](https://github.com/axios/axios/blob/master/CONTRIBUTING.md). And I want to emphasize some key points, which are also applicable to all open source projects.
 
-- **Testing is more important than codes.** Nobody will never make mistakes and can always cover every corner cases. Solid testings include both positive and negative cases.
-- **Change as less as possible.** Unless resulting in breaking features or introducing bugs, don't touch anywhere. Sometimes "sweet" enhancements will cause much more maintaining burdens.
+- **Testing is more important than codes.** Nobody will never make mistakes and can always cover every corner case. Solid testings include both positive and negative cases.
+- **Change as less as possible.** Unless resulting in breaking features or introducing bugs, don't touch anywhere else. Sometimes "sweet" enhancements will cause much more maintaining burdens.
 - **Be patient, persistent, and always keep an eye on it**. It may be hard, but still hope contributors treat them as targets. axios is famous but not actively maintained. Revising repeatedly according to review suggestions may take weeks or months. If anyone has time, feel free to leave comments to help review pull requests.
 
 ## About this repository
