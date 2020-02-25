@@ -199,7 +199,7 @@ Simple text.
 In this case, `data` should be JSON format. If `data` is an object (not null), the default `transformRequest` will set Content-Type to it automatically.
 
 ```js
-axios({
+axios(url, {
   data: {
     a: 42
   }
@@ -207,7 +207,7 @@ axios({
 
 // equals to 
 
-axios({
+axios(url, {
   data: JSON.stringify({a: 42})
 })
 ```
@@ -222,7 +222,7 @@ Note that it treats numbers as strings, while `application/json` is type-sensiti
 var data = new URLSearchParams();
 data.append('a', 42)
 
-axios({
+axios(url, {
   data: data
 })
 
@@ -230,7 +230,7 @@ axios({
 
 var qs = require('qs'); // https://www.npmjs.com/package/qs
 
-axios({
+axios(url, {
   data: qs.stringify({a: '42'})
 })
 ```
@@ -293,7 +293,7 @@ axios.get(imageUrl, {
 
 In server side, you can also set `responseEncoding` to decode the response Buffer data with given character encoding. But I think it is something overlapped with `transformResponse`.
 
-Something else worthy to be mentioned is configing the right `Accept` in `headers`. See more in [IANA](https://www.iana.org/assignments/media-types/media-types.xhtml#application).
+Something else worthy to be mentioned is configuring the right `Accept` in `headers`. See more in [IANA](https://www.iana.org/assignments/media-types/media-types.xhtml#application).
 
 ```js
 axios.get(url, {
@@ -311,12 +311,12 @@ Transformers can be a function or an array. axios provides default `transformReq
 
 ```js
 // do extra things after axios
-axios({
+axios(url, {
   transformRequest: axios.defaults.transformRequest.concat([yourTransformRequest])
 })
 
 // or put yours first
-axios({
+axios(url, {
   transformRequest: [yourTransformRequest].concat(axios.defaults.transformRequest)
 })
 ```
@@ -327,7 +327,7 @@ Transformers are executed in pipeline, without [strange behaviours](#interceptor
 
 Transformers will always be executed, no matter what kind of `method` is and the response is succeeded or failed. axios says `transformRequest` is only applicable for some methods, but "applicable" here is something like "suggested but not disabled".
 
-Without transformers we can also achieve features by interceptors. But they focuse on request or response data, and closer to adapters.
+Without transformers we can also achieve features by interceptors. But transformers focuse on request or response data, and are closer to adapters.
 
 #### Why was't `timeout` fired at the right time?
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
@@ -352,7 +352,7 @@ axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
 And you can set `adapter` explicitly.
 
 ```js
-axios({
+axios(url, {
   adapter: require('axios/lib/adapters/http')
 })
 ```
