@@ -343,7 +343,7 @@ Someone wishes other types of timeout. Looks like [got](https://github.com/sindr
 #### Do you use the right `adapter`?
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
-For environments like [Electron](https://www.electronjs.org/) or [Jest](https://jestjs.io/), both [XMLHttpRequest][mdn-xhr] and [process](https://nodejs.org/api/process.html) are existed in the global context. axios may not select the right `adapter` as you want.
+For environments like [Electron](https://www.electronjs.org/) or [Jest](https://jestjs.io/), both [XMLHttpRequest][mdn-xhr] and [process](https://nodejs.org/api/process.html) exist in the global context. axios may not select the right `adapter` as you want.
 
 ```js
 axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
