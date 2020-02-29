@@ -611,7 +611,9 @@ Great! Now you are the smartest man/woman in the world, because you find a bug/i
 ## About this repository
 [<ins>back to top</ins>](#you-dont-know-axios)
 
-Why not amend axios official document directly? This personal repository can be updated sooner, and affects axios reputations less. Feedbacks will also be shared with axios team timely.
+> It is a guide for directions, instead of all-powerful encyclopedia.
+
+Why not amend axios official document directly? This personal repository can be updated sooner, and affects axios reputations less. Hope I didn't make serious mistakes and offend anyone. Feedbacks will also be shared with axios team timely.
 
 Welcome everyone to open issue or pull request to give suggestions for this document. But don't ask axios questions here.
 
