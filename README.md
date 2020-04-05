@@ -93,7 +93,7 @@ The above diagram shows all request configs.
 - [Receive special types of response by `responseType` and `responseEncoding`.](#receive-special-types-of-response-by-responsetype-and-responseencoding)
 - [Make things precisely, `transformRequest` and `transformResponse`.](#make-things-precisely-transformrequest-and-transformresponse)
 - [Why was't `timeout` fired at the right time?](#why-wast-timeout-fired-at-the-right-time)
-- [How to track progress events?](#how-to-track-progress-events)
+- [How to track progress by `onUploadProgress` and `onDownloadProgress`?](#how-to-track-progress-by-onuploadprogress-and-ondownloadprogress)
 - [Do you use the right `adapter`?](#do-you-use-the-right-adapter)
 - [Server side only: transports, agents, proxies and redirections.](#server-side-only-transports-agents-proxies-and-redirections)
 
@@ -341,10 +341,10 @@ Now axios doesn't have a convenient way to validate a timeout error, except for 
 
 Someone wishes other types of timeout. Looks like [got](https://github.com/sindresorhus/got#timeout) provides them very well.
 
-#### How to track progress events?
+#### How to track progress by `onUploadProgress` and `onDownloadProgress`?
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
 
-`onUploadProgress` and `onDownloadProgress` are wrappers of [XMLHttpRequest](mdn-xhr) events, which depend on native implementations. axios doesn't have much workarounds for them.
+They are wrappers of [XMLHttpRequest](mdn-xhr) events, which depend on native implementations. axios doesn't have much workarounds for them.
 
 - If no event is fired, check related environments, like different browsers or React Native.
 - If `event.total = 0` or `event.lengthComputable = false` when downloading, maybe due to no `Content-Length` in response headers.
