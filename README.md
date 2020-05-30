@@ -359,7 +359,7 @@ For environments like [Electron](https://www.electronjs.org/) or [Jest](https://
 axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
 ```
 
-If you want to set `adapter` explicitly, note that axios makes an alias from http adapter to xhr adapter in browser. Therefore, remember to configure your bundler properly. Refer [Webpack's target](https://webpack.js.org/configuration/target/).
+If you want to set `adapter` explicitly, note that axios makes an alias from http adapter to xhr adapter in browser. Therefore, remember to configure your bundler properly. Refer to Webpack's [target](https://webpack.js.org/configuration/target/) or [resolve.alias](https://webpack.js.org/configuration/resolve/#resolvealias).
 
 ```js
 axios(url, {
