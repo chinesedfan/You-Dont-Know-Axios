@@ -359,7 +359,7 @@ For environments like [Electron](https://www.electronjs.org/) or [Jest](https://
 axios.defaults.adapter // [Function: httpAdapter] or [Function: xhrAdapter]
 ```
 
-And you can set `adapter` explicitly.
+If you want to set `adapter` explicitly, note that axios makes an alias from http adapter to xhr adapter in browser. Therefore, remember to configure your bundler properly. Refer [Webpack's target](https://webpack.js.org/configuration/target/).
 
 ```js
 axios(url, {
@@ -412,6 +412,13 @@ The main merging strategy changes among versions,
 - <= 0.18, as simple as `Object.assign`, which means values with the same key will be replaced by the later one. No deep merging unless both field values are objects.
 - 0.19, introduces a new util method called `deepMerge`, which will clone the object when replacing, but with some bugs. Arrays are cloned as objects. Some config fields (i.e. `params`) should be supported deep merging but not, and custom default fields are lost totally.
 - &gt;= 0.20, hope axios can fix them and work perfectly again.
+
+I plan to have different merging strategies for different fields,
+
+- always from request config, i.e. url/method/data
+- always merge, i.e. validateStatus
+- deep merge unless is undefined, i.e. headers/auth/proxy/params and custom fields
+- replace unless is undefined, i.e. other axios fields
 
 #### More stories about `headers`
 
