@@ -417,6 +417,10 @@ The main merging strategy changes among versions,
   - deep merge unless is undefined, i.e. headers/auth/proxy/params and custom fields
   - replace unless is undefined, i.e. other axios fields
 
+> Why? Personally, inheritable `url` can be replaced by `baseURL`. And axios already has aliases for methods. Merging `data` will result in hard tracking and is lack of use cases. But sometimes users may prepare authorisations in `params`.
+
+> If users need a request factory, a workaround is `const instance = () => axios(config)`.
+
 #### More stories about `headers`
 
 For `headers`, it includes more things. You can set default headers for methods.
