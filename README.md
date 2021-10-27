@@ -369,7 +369,7 @@ axios(url, {
 })
 ```
 
-If you like more fashion [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), sorry that axios has not supported yet. You have to write one by yourself or search in [npm](https://www.npmjs.com/).
+If you like more fashion [Fetch API][fetch-api], sorry that axios has not supported yet. You have to write one by yourself or search in [npm](https://www.npmjs.com/).
 
 #### Server side only: transports, agents, proxies and redirections.
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#quick-links)
@@ -378,7 +378,7 @@ Time to test your skills about Node.js' [http](https://nodejs.org/api/http.html)
 
 The transport is determined by the url protocol (starting with `https` or not). But usually, the native http/https transport is wrapped by [follow-redirects][follow-redirects], which is an independent open source library that handles redirections, unless you have set `maxRedirects` to zero. You can also choose your own transport by `transport` in request config.
 
-Browsers handle redirections automatically. axios has no control for that.
+Browsers handle redirections automatically. axios has no control for that. But [fetch][fetch-api] provides an option called `redirect`.
 
 ### Response Schema
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
@@ -644,6 +644,7 @@ Welcome everyone to open issue or pull request to give suggestions for this docu
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
 
 [axios]: https://github.com/axios/axios
+[fetch-api]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 [follow-redirects]: https://github.com/follow-redirects/follow-redirects
 [request-method-aliases]: https://github.com/axios/axios#request-method-aliases
 [mdn-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
