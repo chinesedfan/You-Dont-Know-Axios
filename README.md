@@ -501,16 +501,16 @@ setTimeout(function () {
 ```
 
 - As well as `promise.then(onResolve, onReject)`, the rejection handler can't catch errors thrown by the resolve handler of the same `use` pair. For example, `responseReject1` will not be invoked even if `responseResolve1` thrown something, but `responseReject2` can.
-- If you want to break the chain and trigger the final catch block, don't return quietly in any reject handlers.
+- If you want to break the chain and trigger the final catch block, just don't return quietly in any resolve handlers and make sure no more later reject handlers handle it.
 
 ```js
-axios.interceptors.request.use(requestResolve, function () {
+axios.interceptors.request.use(function () {
   throw new Error('reason');
 
   // or
 
   return Promise.reject(new Error('reason'));
-});
+}, requestReject);
 ```
 
 - You can pass `async` functions (imaging them as functions return a Promise) as interceptor handlers, as long as the chain is connected correctly.
