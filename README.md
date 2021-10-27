@@ -124,6 +124,8 @@ First of all, `headers` in axios are request headers, not response headers. Ther
 - If some headers couldn't be accessed in your codes, even though they were visible in the network panel, please make sure the server responses correct [Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Access-Control-Expose-Headers) header.
 - As [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Credentialed_requests_and_wildcards) says, when responding to a credentialed request, the server must specify an origin in the value of the `Access-Control-Allow-Origin header`, instead of specifying the "*" wildcard. Or cookies will not be sent, even though `withCredentials` has been set true in axios.
 
+> In browser environments, CORS-preflight requests are initiated and entirely managed by the user agent; the preflight operations are completely opaque to our userland code and axios has no ability to add additional headers to the outgoing OPTIONS request (because it isn't making it). - [#3464, @knksmith57](https://github.com/axios/axios/issues/3464#issuecomment-949978559)
+
 Some users complain cookies can't be set when the server has responded `Set-Cookie` header. You may check whether they are [HttpOnly or Secure](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies), and scopes of cookies.
 
 I prefer to set `Authorization` manually in `headers` to authorize, unless you know exactly what happens in axios. Here are some warnings for users,
@@ -392,6 +394,8 @@ axios(url, {
   }
 })
 ```
+
+For responses with http status 304, axios just returns the empty body as the server returns. It's your responsibility to cache and retrieve the body contents. But [sindresorhus/got](https://github.com/sindresorhus/got/blob/main/documentation/cache.md) provides a built-in `cache` option.
 
 ### Config Defaults
 [<ins>back to top</ins>](#you-dont-know-axios)&nbsp;&nbsp;[<ins>back to parent</ins>](#usage-knowledges)
