@@ -258,8 +258,8 @@ axios.get(imageUrl, {
 })
   .then(function (response) {
     // `res` is the callback parameter of `express` handle
-    res.type('image/jpeg');
-    res.end(response.data, 'binary');
+    response.type('image/jpeg');
+    response.end(response.data, 'binary');
   });
 ```
 
